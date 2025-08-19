@@ -6,9 +6,9 @@ resource "aws_eks_cluster" "fiap_x_eks" {
   name     = var.aws_cluster_name
   role_arn = "arn:aws:iam::${var.aws_account_id}:role/LabRole"
 
-  version = "1.30"
+  version = "1.33"
   upgrade_policy {
-    support_type = "STANDARD"
+    support_type = "EXTENDED"
   }
 
   access_config {
@@ -37,7 +37,7 @@ resource "aws_eks_node_group" "fiap_x_eks_node_group" {
   cluster_name    = var.aws_cluster_name
   node_group_name = "${var.aws_cluster_name}-nodegroup"
   node_role_arn   = "arn:aws:iam::${var.aws_account_id}:role/LabRole"
-  instance_types  = ["t3.medium"]
+  instance_types  = ["t3.micro"]
   disk_size       = 20
   ami_type        = "AL2023_x86_64_STANDARD"
   capacity_type   = "ON_DEMAND"
@@ -65,7 +65,6 @@ resource "aws_eks_node_group" "fiap_x_eks_node_group" {
 resource "aws_eks_addon" "kubeproxy" {
   cluster_name                = aws_eks_cluster.fiap_x_eks.name
   addon_name                  = "kube-proxy"
-  addon_version               = "v1.30.0-eksbuild.3"
   resolve_conflicts_on_update = "PRESERVE"
   depends_on = [
     aws_eks_cluster.fiap_x_eks,
@@ -76,7 +75,6 @@ resource "aws_eks_addon" "kubeproxy" {
 resource "aws_eks_addon" "coredns" {
   cluster_name                = aws_eks_cluster.fiap_x_eks.name
   addon_name                  = "coredns"
-  addon_version               = "v1.11.1-eksbuild.8"
   resolve_conflicts_on_update = "PRESERVE"
   depends_on = [
     aws_eks_cluster.fiap_x_eks,
